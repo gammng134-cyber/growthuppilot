@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink-950: #05060b;
+  --color-ink-900: #0a0c14;
+  --color-ink-800: #10131f;
+  --color-ink-700: #171b2c;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ink-950);
+  color: #cbd5e1;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.4);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0c14;
+}
+::-webkit-scrollbar-thumb {
+  background: #232840;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2e3554;
+}
+
+/* Subtle grid + aurora used by hero/sections */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 255, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.text-gradient {
+  background: linear-gradient(92deg, #a5b4fc 0%, #818cf8 40%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.prose-article h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 2.25rem 0 0.75rem;
+}
+.prose-article h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 1.75rem 0 0.5rem;
+}
+.prose-article p {
+  margin: 0 0 1.1rem;
+  line-height: 1.8;
+  color: #b6c2d4;
+}
+.prose-article ul {
+  margin: 0 0 1.25rem 1.25rem;
+  list-style: disc;
+}
+.prose-article li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+  color: #b6c2d4;
+}
+.prose-article a {
+  color: #a5b4fc;
+  text-decoration: underline;
+}
+.prose-article code {
+  background: rgba(148, 163, 255, 0.1);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.875em;
+}
+.prose-article strong {
+  color: #e2e8f0;
+}

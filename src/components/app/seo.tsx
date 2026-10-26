@@ -1,0 +1,261 @@
+"use client";
+
+import {
+  CheckCheck,
+  ExternalLink,
+  Globe,
+  PenTool,
+  Sparkles,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import * as React from "react";
+
+import { PageHeader } from "@/components/app/shell";
+import { Badge, StatusBadge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
+import { Article, Keyword } from "@/lib/storage/types";
+
+export function SeoPage({ isDemo }: { isDemo: boolean }) {
+  const { toast } = useToast();
+  const [keywords, setKeywords] = React.useState<Keyword[]>([]);
+  const [articles, setArticles] = React.useState<Article[]>([]);
+  const [seeds, setSeeds] = React.useState("");
+  const [busy, setBusy] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  const load = React.useCallback(async () => {
+    const [k, a] = await Promise.all([
+      fetch("/api/seo/keywords").then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/seo/articles").then((r) => (r.ok ? r.json() : [])),
+    ]);
+    setKeywords(k);
+    setArticles(a);
+    setLoading(false);
+  }, []);
+
+  React.useEffect(() => {
+    load();
+  }, [load]);
+
+  async function generatePlan() {
+    setBusy("plan");
+    const res = await fetch("/api/seo/keywords", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ seeds }),
+    });
+    setBusy(null);
+    const data = await res.json();
+    if (!res.ok) {
+      toast(data.error ?? "Plan generation failed", "error");
+      return;
+    }
+    toast(`Keyword plan ready — ${data.length} keywords`);
+    setSeeds("");
+    load();
+  }
+
+  async function writeArticle(keywordId: string) {
+    setBusy(keywordId);
+    const res = await fetch("/api/seo/articles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ keywordId }),
+    });
+    setBusy(null);
+    const data = await res.json();
+    if (!res.ok) {
+      toast(data.error ?? "Article generation failed", "error");
+      return;
+    }
+    toast("Article drafted — review and publish");
+    load();
+  }
+
+  async function publish(article: Article, status: "published" | "draft") {
+    setBusy(article.id);
+    const res = await fetch(`/api/seo/articles/${article.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    const data = await res.json().catch(() => ({}));
+    console.log("[SEo] publish patch status:", res.status, res.ok, "url:", `/api/seo/articles/${article.id}`, "body:", JSON.stringify(data));
+    if (!res.ok) {
+      toast("Update failed", "error");
+      return;
+    }
+    toast(status === "published" ? "Published to your blog" : "Unpublished");
+    load();
+  }
+
+  const articleByKeyword = React.useMemo(() => {
+    const m = new Map<string, Article>();
+    for (const a of articles) if (a.keywordId) m.set(a.keywordId, a);
+    return m;
+  }, [articles]);
+
+  return (
+    <div>
+      <PageHeader
+        title="SEO Agent"
+        subtitle="Plan → draft → approve → publish. Your blog lives at /blog with schema, sitemap and OG images."
+        action={
+          <Link href="/blog" target="_blank">
+            <Button variant="secondary" size="sm">
+              <ExternalLink className="h-3.5 w-3.5" /> View blog
+            </Button>
+          </Link>
+        }
+      />
+
+      <div className="mb-8 flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-6 sm:flex-row sm:items-end">
+        <div className="flex-1">
+          <label className="mb-1.5 block text-xs text-slate-400">
+            Optional seed topics (comma-separated) — uses your Settings brief if
+            empty
+          </label>
+          <Input
+            value={seeds}
+            onChange={(e) => setSeeds(e.target.value)}
+            placeholder="founder sales, crm for small teams…"
+          />
+        </div>
+        <Button onClick={generatePlan} disabled={busy === "plan"}>
+          <Sparkles className={`h-4 w-4 ${busy === "plan" ? "animate-pulse" : ""}`} />
+          {busy === "plan" ? "Researching…" : "Generate keyword plan"}
+        </Button>
+      </div>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          Keyword plan ({keywords.length})
+        </h2>
+        {loading ? (
+          <p className="text-sm text-slate-500">Loading…</p>
+        ) : keywords.length === 0 ? (
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+            No keywords yet. Generate a plan — volumes are AI-estimated in v1.
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-white/10">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-white/[0.03] text-xs uppercase tracking-wider text-slate-500">
+                <tr>
+                  <th className="px-5 py-3 font-medium">Keyword</th>
+                  <th className="px-5 py-3 font-medium">Intent</th>
+                  <th className="px-5 py-3 font-medium">Vol/mo*</th>
+                  <th className="px-5 py-3 font-medium">Diff</th>
+                  <th className="px-5 py-3" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {keywords.map((k) => {
+                  const article = k.id ? articleByKeyword.get(k.id) : undefined;
+                  return (
+                    <tr key={k.id} className="transition-colors hover:bg-white/[0.02]">
+                      <td className="px-5 py-4">
+                        <div className="font-medium text-slate-200">{k.keyword}</div>
+                        <div className="mt-0.5 max-w-md truncate text-xs text-slate-500">
+                          {k.angle}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4"><Badge>{k.intent}</Badge></td>
+                      <td className="px-5 py-4 text-slate-400">~{k.estVolume.toLocaleString()}</td>
+                      <td className="px-5 py-4">
+                        <span className={`font-medium ${k.difficulty <= 3 ? "text-emerald-300" : k.difficulty <= 6 ? "text-amber-300" : "text-rose-300"}`}>
+                          {k.difficulty}/10
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        {article ? (
+                          <StatusBadge status={article.status} />
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => writeArticle(k.id)}
+                            disabled={busy === k.id}
+                          >
+                            <PenTool className={`h-3.5 w-3.5 ${busy === k.id ? "animate-pulse" : ""}`} />
+                            {busy === k.id ? "Writing…" : "Write article"}
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="mt-2 text-[11px] text-slate-600">
+          *AI-estimated in v1. Live SERP data + rank tracking are on the roadmap.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          Articles ({articles.length})
+        </h2>
+        {articles.length === 0 && !loading && (
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+            No articles yet. Write one from a keyword above.
+          </div>
+        )}
+        <div className="space-y-3">
+          {articles.map((a) => (
+            <div
+              key={a.id}
+              className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4"
+            >
+              <div className="flex flex-wrap items-center gap-3">
+                <StatusBadge status={a.status} />
+                <span className="text-sm font-medium text-slate-200">{a.title}</span>
+                <span className="text-xs text-slate-500">/blog/{a.slug}</span>
+                <div className="ml-auto flex gap-2">
+                  {a.status === "published" ? (
+                    <>
+                      <Link href={`/blog/${a.slug}`} target="_blank">
+                        <Button size="sm" variant="ghost">
+                          <Globe className="h-3.5 w-3.5" /> View
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => publish(a, "draft")}
+                        disabled={busy === a.id}
+                      >
+                        <X className="h-3.5 w-3.5" /> Unpublish
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={() => publish(a, "published")}
+                      disabled={busy === a.id}
+                    >
+                      <CheckCheck className="h-3.5 w-3.5" /> Publish
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <p className="mt-2 line-clamp-2 text-xs text-slate-500">
+                {a.metaDescription}
+              </p>
+            </div>
+          ))}
+        </div>
+        {isDemo && (
+          <p className="mt-4 text-[11px] text-amber-300/70">
+            Demo mode: articles are AI-canned and publish to the shared demo blog.
+          </p>
+        )}
+      </section>
+    </div>
+  );
+}
