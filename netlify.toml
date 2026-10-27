@@ -1,9 +1,13 @@
 # Netlify build configuration for the GrowthPilot Next.js app.
 #
-# Netlify's Next.js Runtime (@netlify/plugin-nextjs) turns the App Router output
-# into serverless + edge functions, so the publish directory stays `.next`.
+# Netlify enables its Next.js Runtime (OpenNext adapter) automatically for
+# Next.js projects, so it is deliberately not declared or version-pinned here —
+# Netlify's docs recommend letting Netlify add the current adapter on each
+# build. The publish directory stays `.next`: the adapter turns the App Router
+# build into serverless functions plus static assets.
+#
 # Deploy: Netlify → Add new site → Import an existing project → pick this repo.
-# See NETLIFY.md for the environment variables this app needs.
+# NETLIFY.md lists the environment variables this app needs.
 
 [build]
   command = "npm run build"
@@ -11,6 +15,3 @@
 
 [build.environment]
   NODE_VERSION = "22"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
