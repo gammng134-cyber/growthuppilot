@@ -108,7 +108,7 @@ export function ContactsPage() {
       {showAdd && (
         <form
           onSubmit={addContact}
-          className="mb-6 grid gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-6 sm:grid-cols-2"
+          className="mb-6 grid gap-4 rounded-xl border border-[var(--line)] bg-[var(--card)] p-6 sm:grid-cols-2"
         >
           <div>
             <Label>Name</Label>
@@ -150,11 +150,11 @@ export function ContactsPage() {
       )}
 
       {showImport && (
-        <div className="mb-6 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <div className="mb-6 rounded-xl border border-[var(--line)] bg-[var(--card)] p-6">
           <div className="mb-2 flex items-center justify-between">
             <Label className="mb-0">Paste CSV (columns: name, email, company, role, notes, source_context)</Label>
             <button
-              className="cursor-pointer text-xs text-indigo-300 hover:text-indigo-200"
+              className="cursor-pointer text-xs text-slate-300 hover:text-slate-400"
               onClick={() => setCsv(SAMPLE_CSV)}
             >
               paste sample
@@ -174,9 +174,9 @@ export function ContactsPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-white/10">
+      <div className="overflow-hidden rounded-xl border border-[var(--line)]">
         <table className="w-full text-left text-sm">
-          <thead className="bg-white/[0.03] text-xs uppercase tracking-wider text-slate-500">
+          <thead className="bg-[var(--card)] text-[13px] text-[var(--mut)]">
             <tr>
               <th className="px-5 py-3 font-medium">Contact</th>
               <th className="px-5 py-3 font-medium">Company</th>
@@ -195,7 +195,7 @@ export function ContactsPage() {
               </tr>
             ) : (
               contacts.map((c) => (
-                <tr key={c.id} className="transition-colors hover:bg-white/[0.02]">
+                <tr key={c.id} className="transition-colors hover:bg-[var(--card)]">
                   <td className="px-5 py-4">
                     <div className="font-medium text-slate-200">{c.name || "—"}</div>
                     <div className="text-xs text-slate-500">{c.email}</div>

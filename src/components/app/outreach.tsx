@@ -137,11 +137,11 @@ export function OutreachPage({ isDemo }: { isDemo: boolean }) {
     <div>
       <PageHeader
         title="Outreach"
-        subtitle="The Email Agent drafts, you approve. Nothing sends itself."
+        subtitle="The Email Agent drafts, you approve — or turn on the cold-email autopilot in Settings to let it send."
       />
 
       {contacts.length === 0 && !loading && (
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-6 py-10 text-center text-sm text-slate-400">
           Add contacts first — the Email Agent drafts one personalized email per
           contact.
         </div>
@@ -149,7 +149,7 @@ export function OutreachPage({ isDemo }: { isDemo: boolean }) {
 
       {contacts.length > 0 && (
         <section className="mb-10">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
             Ready to draft ({contacts.filter((c) => !draftedContactIds.has(c.id) && !c.unsubscribed).length})
           </h2>
           <div className="grid gap-3 md:grid-cols-2">
@@ -158,7 +158,7 @@ export function OutreachPage({ isDemo }: { isDemo: boolean }) {
               .map((c) => (
                 <div
                   key={c.id}
-                  className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4"
+                  className="flex items-center gap-4 rounded-xl border border-[var(--line)] bg-[var(--card)] px-5 py-4"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-slate-200">
@@ -187,7 +187,7 @@ export function OutreachPage({ isDemo }: { isDemo: boolean }) {
 
       {pending.length > 0 && (
         <section className="mb-10">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
             Awaiting your approval ({pending.length})
           </h2>
           <div className="space-y-3">
@@ -210,7 +210,7 @@ export function OutreachPage({ isDemo }: { isDemo: boolean }) {
 
       {history.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
             Sent & history ({history.length})
           </h2>
           <div className="space-y-3">
@@ -231,7 +231,7 @@ export function OutreachPage({ isDemo }: { isDemo: boolean }) {
       )}
 
       {!loading && drafts.length === 0 && contacts.length > 0 && (
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-6 py-10 text-center text-sm text-slate-400">
           No drafts yet — hit <MailPlus className="inline h-3.5 w-3.5" /> &ldquo;Draft
           with AI&rdquo; above.
         </div>
@@ -285,7 +285,7 @@ function DraftCard({
   }, [expanded, draft.id, draft.status]);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02]">
+    <div className="rounded-xl border border-[var(--line)] bg-[var(--card)]">
       <button
         onClick={onToggle}
         className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left"

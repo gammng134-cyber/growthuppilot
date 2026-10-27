@@ -32,7 +32,7 @@ export default async function BlogPage() {
           Every article is planned from a keyword list, drafted by the SEO Agent,
           reviewed (or auto-published, if you toggled it), and shipped to a real
           accessible URL at{" "}
-          <code className="text-indigo-300">yourdomain.com/blog/...</code> with
+          <code className="text-slate-300">yourdomain.com/blog/...</code> with
           schema, sitemap and OG images.
         </p>
       </header>

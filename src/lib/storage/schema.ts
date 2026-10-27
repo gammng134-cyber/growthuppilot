@@ -33,6 +33,10 @@ export const settings = pgTable("settings", {
   autoPublish: boolean("auto_publish").notNull().default(false),
   // "resend" (default) or "mailbox" — where the Email Agent hands off sends.
   sendVia: text("send_via").notNull().default("resend"),
+  // Cold-email autopilot: send emails + follow-ups without per-send approval.
+  outreachAutopilot: boolean("outreach_autopilot").notNull().default(false),
+  // Max autopilot emails per user per day (safety cap).
+  dailySendCap: integer("daily_send_cap").notNull().default(15),
 });
 
 /** OAuth-connected personal mailboxes (Gmail / Outlook) used as send transport. */

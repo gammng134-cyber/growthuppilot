@@ -22,6 +22,12 @@ function base64UrlEncode(s: string): string {
   return Buffer.from(s, "utf8").toString("base64url");
 }
 
+/** RFC 2047 encodes a header (e.g. Subject) when it isn't pure printable ASCII. */
+function encodeHeaderValue(text: string): string {
+  if (/^[\x20-\x7e]*$/.test(text)) return text;
+  return `=?UTF-8?B?${Buffer.from(text, "utf8").toString("base64")}?=`;
+}
+
 function addressEmails(values: string[]): string[] {
   return values
     .map((v) => v.match(/<([^>]+)>/)?.[1] ?? v)
@@ -44,7 +50,7 @@ async function sendViaGmail(opts: MailboxSendOpts): Promise<SendResultInfo> {
   const lines: string[] = [
     `From: ${opts.from}`,
     `To: ${opts.to}`,
-    `Subject: ${opts.subject}`,
+    `Subject: ${encodeHeaderValue(opts.subject)}`,
     "MIME-Version: 1.0",
     'Content-Type: multipart/alternative; boundary="gp_boundary"',
   ];

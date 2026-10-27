@@ -346,6 +346,27 @@ export class MemoryStore implements Storage {
     }
     return out;
   }
+  async outreachTargets(now: Date): Promise<
+    { userId: string; sentToday: number }[]
+  > {
+    const out: { userId: string; sentToday: number }[] = [];
+    for (const user of this.users.values()) {
+      const settings = await this.getSettings(user.id);
+      if (!settings.outreachAutopilot) continue;
+      const startOfDay = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+      );
+      const sentToday = [...this.draftsMap.values()].filter(
+        (d) =>
+          d.userId === user.id &&
+          d.status === "sent" &&
+          d.sentAt !== null &&
+          d.sentAt >= startOfDay,
+      ).length;
+      out.push({ userId: user.id, sentToday });
+    }
+    return out;
+  }
   async autopilotTargets(): Promise<
     { userId: string; keyword: Keyword | null; hasPlan: boolean }[]
   > {

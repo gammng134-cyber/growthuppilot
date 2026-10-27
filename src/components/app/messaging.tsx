@@ -95,13 +95,13 @@ export function MessagingPage({ isDemo }: { isDemo: boolean }) {
       />
 
       {contacts.length === 0 && !loading && (
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-6 py-10 text-center text-sm text-slate-400">
           No contacts yet — add some in Contacts, then draft DMs here.
         </div>
       )}
 
       {contacts.length > 0 && (
-        <section className="mb-8 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <section className="mb-8 rounded-xl border border-[var(--line)] bg-[var(--card)] p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">
               <label className="mb-1.5 block text-xs text-slate-400">
@@ -133,10 +133,10 @@ export function MessagingPage({ isDemo }: { isDemo: boolean }) {
 
       {draft && (
         <section>
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
             Draft for {draft.name} — ready to copy
           </h2>
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+          <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] p-6">
             <div className="ml-8 rounded-2xl rounded-tl-sm border border-sky-400/20 bg-sky-500/10 px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap text-slate-200">
               {draft.message}
             </div>

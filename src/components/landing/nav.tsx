@@ -1,66 +1,107 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
+// Fixed navigation with no chrome: wordmark, plain links, one action.
+// Signature move (colour chapters): the bar takes the ink of the chapter
+// beneath it, switching with a 300ms colour transition as each edge passes.
+// It is also the home of the page's entrance reveals.
+
+const INK = {
+  paper: "#f5f4f1",
+  grey: "#000000",
+  mint: "#000000",
+  orange: "#000000",
+  surface: "#f5f4f1",
+  ink: "#ffffff",
+} as const;
+
+export function useReveals() {
+  React.useEffect(() => {
+    const els = document.querySelectorAll<HTMLElement>(".gp-reveal");
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-in");
+            obs.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.2 },
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+}
 
 export function Nav() {
-  const [scrolled, setScrolled] = React.useState(false);
+  const [ink, setInk] = React.useState<string>(INK.paper);
+  useReveals();
 
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const sections = document.querySelectorAll<HTMLElement>("[data-chapter]");
+    if (!sections.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const name = entry.target.getAttribute("data-chapter") ?? "paper";
+          setInk(INK[name as keyof typeof INK] ?? INK.paper);
+        }
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+    );
+    sections.forEach((s) => obs.observe(s));
+    return () => obs.disconnect();
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -32, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "border-b border-white/5 bg-ink-950/80 backdrop-blur-xl"
-          : "bg-transparent"
-      }`}
+    <header
+      className="fixed inset-x-0 top-0 z-50 transition-colors duration-300"
+      style={{ color: ink }}
     >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-400 text-sm font-bold text-white">
-            G
-          </span>
-          <span className="text-[15px] font-semibold tracking-tight text-white">
-            GrowthPilot
-          </span>
+      <nav className="flex h-16 items-center justify-between px-6 lg:px-10">
+        <Link href="/" className="flex items-center gap-2.5" aria-label="GrowthPilot home">
+          <Mark />
+          <span className="text-[15px] font-semibold tracking-tight">GrowthPilot</span>
         </Link>
-        <div className="hidden items-center gap-8 text-sm text-slate-400 md:flex">
-          <a href="#agents" className="transition-colors hover:text-white">
-            Agents
-          </a>
-          <a href="#how" className="transition-colors hover:text-white">
-            How it works
-          </a>
-          <a href="#safety" className="transition-colors hover:text-white">
-            Safety
-          </a>
-          <a href="#faq" className="transition-colors hover:text-white">
-            FAQ
-          </a>
+        <div className="hidden items-center gap-8 text-[15px] font-medium md:flex">
+          <a href="#agents" className="hover:underline underline-offset-4">Agents</a>
+          <a href="#showcase" className="hover:underline underline-offset-4">Live demo</a>
+          <a href="#how" className="hover:underline underline-offset-4">How it works</a>
+          <a href="#faq" className="hover:underline underline-offset-4">FAQ</a>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/login">
-            <Button variant="ghost" size="sm">
-              Sign in
-            </Button>
+        <div className="flex items-center gap-5">
+          <Link href="/login" className="text-[15px] font-medium hover:underline underline-offset-4">
+            Sign in
           </Link>
-          <Link href="/signup">
-            <Button size="sm">Start free</Button>
+          <Link
+            href="/signup"
+            className="bg-[var(--accent)] px-4 py-2 text-[15px] font-semibold text-[var(--accent-ink)] transition-transform duration-150 hover:scale-[1.03] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          >
+            Start free
           </Link>
         </div>
       </nav>
-    </motion.header>
+    </header>
+  );
+}
+
+/** The mark: a climb line in the mint accent, drawn for GrowthPilot. */
+export function Mark({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className="shrink-0">
+      <rect x="0" y="0" width="24" height="24" rx="6" fill="#000000" />
+      <path
+        d="M6 15.5 L12 7 L18 15.5"
+        fill="none"
+        stroke="#a7ff9c"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

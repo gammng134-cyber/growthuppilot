@@ -230,6 +230,8 @@ export class PgStore implements Storage {
       autopilot: r.autopilot,
       autoPublish: r.autoPublish,
       sendVia: r.sendVia as Settings["sendVia"],
+      outreachAutopilot: r.outreachAutopilot,
+      dailySendCap: r.dailySendCap,
     };
   }
 
@@ -640,6 +642,33 @@ export class PgStore implements Storage {
       );
       const next = kw.find((k) => !writtenIds.has(k.id)) ?? null;
       out.push({ userId: u.id, keyword: next, hasPlan: kw.length > 0 });
+    }
+    return out;
+  }
+
+  async outreachTargets(now: Date): Promise<
+    { userId: string; sentToday: number }[]
+  > {
+    const startOfDay = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+    );
+    const rows = await this.db
+      .select({ userId: settingsTable.userId })
+      .from(settingsTable)
+      .where(eq(settingsTable.outreachAutopilot, true));
+    const out: { userId: string; sentToday: number }[] = [];
+    for (const { userId } of rows) {
+      const [c] = await this.db
+        .select({ n: sql<number>`count(*)::int` })
+        .from(emailDrafts)
+        .where(
+          and(
+            eq(emailDrafts.userId, userId),
+            eq(emailDrafts.status, "sent"),
+            sql`${emailDrafts.sentAt} >= ${startOfDay}`,
+          ),
+        );
+      out.push({ userId, sentToday: c?.n ?? 0 });
     }
     return out;
   }

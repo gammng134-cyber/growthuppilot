@@ -34,7 +34,7 @@ const TIER_STYLE: Record<
   cold: {
     bar: "bg-slate-600",
     text: "text-slate-500",
-    badge: "border-white/10 bg-white/5 text-slate-400",
+    badge: "border-[var(--line)] bg-white/5 text-slate-400",
   },
 };
 
@@ -107,15 +107,15 @@ export function LeadsPage({ isDemo }: { isDemo: boolean }) {
       />
 
       {contacts.length === 0 && !loading && (
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-6 py-10 text-center text-sm text-slate-400">
           No contacts yet — add some in Contacts, then score them here.
         </div>
       )}
 
       {contacts.length > 0 && (
-        <section className="mb-10 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <section className="mb-10 rounded-xl border border-[var(--line)] bg-[var(--card)] p-6">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xs font-medium uppercase tracking-widest text-slate-500">
+            <h2 className="text-[13px] font-medium text-[var(--mut)]">
               Pick who to score ({selected.size} selected)
             </h2>
             <div className="flex gap-2">
@@ -145,7 +145,7 @@ export function LeadsPage({ isDemo }: { isDemo: boolean }) {
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                   selected.has(c.id)
                     ? "border-rose-400/40 bg-rose-500/[0.06]"
-                    : "border-white/10 bg-white/[0.01] hover:border-white/20"
+                    : "border-[var(--line)] bg-white/[0.01] hover:border-white/20"
                 }`}
               >
                 <span
@@ -182,11 +182,11 @@ export function LeadsPage({ isDemo }: { isDemo: boolean }) {
 
       {scored && (
         <section>
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
             Buying-intent queue — sorted
           </h2>
           {scored.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+            <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-6 py-10 text-center text-sm text-slate-400">
               Nothing scored. Select contacts and run the agent.
             </div>
           ) : (
@@ -197,7 +197,7 @@ export function LeadsPage({ isDemo }: { isDemo: boolean }) {
                 return (
                   <div
                     key={s.contactId}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4"
+                    className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-5 py-4"
                   >
                     <div className="flex items-center gap-4">
                       <div
@@ -206,7 +206,7 @@ export function LeadsPage({ isDemo }: { isDemo: boolean }) {
                             ? "border-rose-400/30 bg-rose-500/10 text-rose-300"
                             : s.tier === "warm"
                               ? "border-amber-400/30 bg-amber-500/10 text-amber-300"
-                              : "border-white/10 bg-white/5 text-slate-400"
+                              : "border-[var(--line)] bg-white/5 text-slate-400"
                         }`}
                       >
                         {s.score}
@@ -224,7 +224,7 @@ export function LeadsPage({ isDemo }: { isDemo: boolean }) {
                           )}
                           <Badge className={style.badge}>{s.tier}</Badge>
                         </div>
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--raised)]">
                           <div
                             className={`h-full rounded-full ${style.bar}`}
                             style={{ width: `${s.score}%` }}

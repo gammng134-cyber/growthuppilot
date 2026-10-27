@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.87",
@@ -23,7 +24,7 @@
     "framer-motion": "^14.0.0",
     "jose": "^6.2.12",
     "lucide-react": "^1.51.0",
-    "next": "15.5.27",
+    "next": "^15.4.4",
     "postgres": "^3.4.9",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -36,15 +37,18 @@
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^22.20.5",
-    "@types/react": "^19",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "15.5.27",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5",
+    "typescript": "5.9.3",
     "vitest": "^5.0.3"
+  },
+  "vercel": {
+    "regions": ["iad1"]
   }
 }

@@ -74,7 +74,7 @@ export function RepliesPage({ isDemo }: { isDemo: boolean }) {
         subtitle="Turn any post or comment into a helpful, on-voice public reply."
       />
 
-      <section className="mb-8 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+      <section className="mb-8 rounded-xl border border-[var(--line)] bg-[var(--card)] p-6">
         <label className="mb-1.5 block text-xs text-slate-400">
           Paste the post or comment you&apos;re replying to
         </label>
@@ -100,10 +100,10 @@ export function RepliesPage({ isDemo }: { isDemo: boolean }) {
 
       {reply && (
         <section>
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
             Suggested reply — review before it goes public
           </h2>
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+          <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] p-6">
             <div className="rounded-lg border border-amber-400/20 bg-amber-500/[0.06] px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap text-slate-200">
               {reply}
             </div>

@@ -112,7 +112,7 @@ export function SeoPage({ isDemo }: { isDemo: boolean }) {
         }
       />
 
-      <div className="mb-8 flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-6 sm:flex-row sm:items-end">
+      <div className="mb-8 flex flex-col gap-3 rounded-xl border border-[var(--line)] bg-[var(--card)] p-6 sm:flex-row sm:items-end">
         <div className="flex-1">
           <label className="mb-1.5 block text-xs text-slate-400">
             Optional seed topics (comma-separated) — uses your Settings brief if
@@ -131,19 +131,19 @@ export function SeoPage({ isDemo }: { isDemo: boolean }) {
       </div>
 
       <section className="mb-10">
-        <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+        <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
           Keyword plan ({keywords.length})
         </h2>
         {loading ? (
           <p className="text-sm text-slate-500">Loading…</p>
         ) : keywords.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-6 py-10 text-center text-sm text-slate-400">
             No keywords yet. Generate a plan — volumes are AI-estimated in v1.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-white/10">
+          <div className="overflow-x-auto rounded-xl border border-[var(--line)]">
             <table className="w-full text-left text-sm">
-              <thead className="bg-white/[0.03] text-xs uppercase tracking-wider text-slate-500">
+              <thead className="bg-[var(--card)] text-[13px] text-[var(--mut)]">
                 <tr>
                   <th className="px-5 py-3 font-medium">Keyword</th>
                   <th className="px-5 py-3 font-medium">Intent</th>
@@ -156,7 +156,7 @@ export function SeoPage({ isDemo }: { isDemo: boolean }) {
                 {keywords.map((k) => {
                   const article = k.id ? articleByKeyword.get(k.id) : undefined;
                   return (
-                    <tr key={k.id} className="transition-colors hover:bg-white/[0.02]">
+                    <tr key={k.id} className="transition-colors hover:bg-[var(--card)]">
                       <td className="px-5 py-4">
                         <div className="font-medium text-slate-200">{k.keyword}</div>
                         <div className="mt-0.5 max-w-md truncate text-xs text-slate-500">
@@ -198,11 +198,11 @@ export function SeoPage({ isDemo }: { isDemo: boolean }) {
       </section>
 
       <section>
-        <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+        <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
           Articles ({articles.length})
         </h2>
         {articles.length === 0 && !loading && (
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] px-6 py-10 text-center text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-6 py-10 text-center text-sm text-slate-400">
             No articles yet. Write one from a keyword above.
           </div>
         )}
@@ -210,7 +210,7 @@ export function SeoPage({ isDemo }: { isDemo: boolean }) {
           {articles.map((a) => (
             <div
               key={a.id}
-              className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4"
+              className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-5 py-4"
             >
               <div className="flex flex-wrap items-center gap-3">
                 <StatusBadge status={a.status} />

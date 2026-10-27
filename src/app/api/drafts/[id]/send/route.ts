@@ -1,16 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { withUser } from "@/lib/api";
-import {
-  buildEmailHtml,
-  buildEmailText,
-  listUnsubscribeHeader,
-  unsubscribeUrlFor,
-} from "@/lib/email/templates";
-import { emailTransportReady, sendEmail } from "@/lib/email/transport";
-import { ensureFreshAccessToken } from "@/lib/mail/oauth";
-import { sendViaMailbox } from "@/lib/mail/send";
-import { signUnsubscribeToken } from "@/lib/tokens";
+import { deliverDraft, followUpDueAtFor } from "@/lib/mail/deliver";
 import { getStore } from "@/lib/storage";
 
 export async function POST(
@@ -41,94 +32,15 @@ export async function POST(
       );
     }
     const settings = await store.getSettings(user.id);
-    const useMailbox = settings.sendVia === "mailbox";
-    const connections = useMailbox
-      ? await store.listMailConnections(user.id)
-      : [];
-    if (useMailbox && connections.length === 0) {
-      return NextResponse.json(
-        {
-          error:
-            "Send-via mailbox is selected but no mailbox is connected — connect one in Settings or switch send-via back to Resend.",
-        },
-        { status: 400 },
-      );
-    }
-    const connection = connections[0];
 
-    const fromName = useMailbox
-      ? connection.email.split("@")[0]
-      : settings.fromName || user.email.split("@")[0];
-    const fromEmail = useMailbox
-      ? connection.email
-      : settings.fromEmail || "onboarding@resend.dev";
-    const from = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
-
-    const token = await signUnsubscribeToken(user.id, contact.id);
-    const unsubUrl = unsubscribeUrlFor(token);
-    const html = buildEmailHtml({
-      subject: draft.subject,
-      body: draft.body,
-      fromName,
-      unsubscribeUrl: unsubUrl,
-    });
-    const text = buildEmailText({
-      subject: draft.subject,
-      body: draft.body,
-      fromName,
-      unsubscribeUrl: unsubUrl,
-    });
-
-    const result = useMailbox
-      ? await (async () => {
-          const freshAccessToken = await ensureFreshAccessToken(
-            connection,
-            async (patch) => {
-              await store.upsertMailConnection({
-                userId: user.id,
-                provider: connection.provider,
-                providerAccountId: connection.providerAccountId,
-                email: connection.email,
-                accessToken: patch.accessToken,
-                refreshToken: patch.refreshToken,
-                expiresAt: patch.expiresAt,
-                scope: connection.scope,
-              });
-            },
-          );
-          return sendViaMailbox({
-            to: contact.email,
-            subject: draft.subject,
-            html,
-            text,
-            from,
-            replyTo: settings.replyTo || undefined,
-            listUnsubscribe: listUnsubscribeHeader(unsubUrl),
-            connection,
-            freshAccessToken,
-          });
-        })()
-      : await sendEmail({
-          to: contact.email,
-          subject: draft.subject,
-          html,
-          text,
-          from,
-          replyTo: settings.replyTo || undefined,
-          listUnsubscribe: listUnsubscribeHeader(unsubUrl),
-        });
+    const result = await deliverDraft(store, user, draft, contact, settings);
 
     const sentAt = new Date();
-    const followUpDueAt =
-      settings.followUpAfterDays > 0 && draft.kind === "initial"
-        ? new Date(sentAt.getTime() + settings.followUpAfterDays * 86_400_000)
-        : null;
-
     await store.updateDraft(user.id, id, {
       status: "sent",
       sentAt,
-      messageId: result.id,
-      followUpDueAt,
+      messageId: result.messageId,
+      followUpDueAt: followUpDueAtFor(settings, draft.kind, sentAt),
     });
     await store.addEvent({
       userId: user.id,
@@ -138,16 +50,10 @@ export async function POST(
       meta: `via ${result.transport}`,
     });
 
-    const transport = useMailbox
-      ? result.transport
-      : emailTransportReady()
-        ? "resend"
-        : "mock";
-
     return NextResponse.json({
       ok: true,
-      messageId: result.id,
-      transport,
+      messageId: result.messageId,
+      transport: result.transport,
     });
   });
 }

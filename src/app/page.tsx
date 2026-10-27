@@ -1,12 +1,11 @@
-import { Footer, Faq } from "@/components/landing/faq";
+import { Faq, FinalCta, Footer } from "@/components/landing/faq";
 import { Hero } from "@/components/landing/hero";
 import { Nav } from "@/components/landing/nav";
 import {
-  AgentDetails,
-  AgentsSection,
-  FinalCta,
+  AgentSwitches,
+  Atmospherics,
   HowItWorks,
-  Safety,
+  Showcase,
 } from "@/components/landing/sections";
 
 export default function Home() {
@@ -14,10 +13,10 @@ export default function Home() {
     <main className="relative">
       <Nav />
       <Hero />
-      <AgentsSection />
-      <AgentDetails />
+      <AgentSwitches />
+      <Showcase />
       <HowItWorks />
-      <Safety />
+      <Atmospherics />
       <Faq />
       <FinalCta />
       <Footer />

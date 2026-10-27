@@ -88,7 +88,7 @@ export function ContentPage({ isDemo }: { isDemo: boolean }) {
         subtitle="One topic in, four platform-ready variants out."
       />
 
-      <section className="mb-8 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+      <section className="mb-8 rounded-xl border border-[var(--line)] bg-[var(--card)] p-6">
         <label className="mb-1.5 block text-xs text-slate-400">
           Topic — one sentence works best
         </label>
@@ -113,21 +113,21 @@ export function ContentPage({ isDemo }: { isDemo: boolean }) {
 
       {variants && (
         <section>
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-widest text-slate-500">
+          <h2 className="mb-3 text-[13px] font-medium text-[var(--mut)]">
             Variants — same idea, four platforms
           </h2>
           <div className="grid gap-3 md:grid-cols-2">
             {PLATFORMS.map((p) => (
               <div
                 key={p.key}
-                className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
+                className="rounded-xl border border-[var(--line)] bg-[var(--card)] p-5"
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-slate-200">
                       {p.name}
                     </span>
-                    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-slate-500">
+                    <span className="rounded-full border border-[var(--line)] px-2 py-0.5 text-[10px] text-slate-500">
                       {p.kind}
                     </span>
                   </div>

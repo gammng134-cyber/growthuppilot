@@ -1,8 +1,0 @@
-   ▲ Next.js 15.5.27
-   - Local:        http://localhost:3203
-   - Network:      http://192.168.1.10:3203
-
- ✓ Starting...
- ✓ Ready in 7.2s
-[auth-debug] verified sub= 11fd08d1-8cdd-4538-bf52-4295f0cfcb5b
-[auth-debug] getUserById 11fd08d1-8cdd-4538-bf52-4295f0cfcb5b found: false

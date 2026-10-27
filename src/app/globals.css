@@ -1,12 +1,89 @@
 @import "tailwindcss";
 
+/* ── GrowthPilot design tokens.
+   Landing: colour-chapters on a dark ground — chapters flood flat mint
+   #a7ff9c, orange #ff6831, grey #c5c5c5 and ink; white ink on dark.
+   App: True-black flat (dark only, per brand) — warm near-black ground,
+   elevation by lightness step, no borders/shadows on cards, accent lime
+   only on data (≤3%), primary control by inversion. */
+
+:root {
+  /* landing chapter palette (dark-only product) */
+  --bg: #0e0d0c;
+  --surface: #1c1a18;
+  --ink: #f5f4f1;
+  --muted: #b4b4b4;
+  --accent: #a7ff9c;        /* the brand mint: action on dark chapters */
+  --accent-ink: #000000;
+  --field-1: #c5c5c5;  --field-1-ink: #000000;
+  --field-2: #a7ff9c;  --field-2-ink: #000000;
+  --field-3: #ff6831;  --field-3-ink: #000000;
+  --field-4: #000000;  --field-4-ink: #ffffff;
+
+  /* app screens, True-black flat */
+  --ground: #0e0d0c;
+  --card: #181716;
+  --raised: #242220;
+  --line: #211f1d;
+  --rule: #1c1a18;
+  --control: #3a3734;
+  --text: #f5f4f1;
+  --mut: #b4b4b4;          /* secondary */
+  --faint: #949494;        /* meta */
+  --primary: #f5f4f1;      /* inverted: light fill, black label */
+  --hue: #a7ff9c;          /* the one data hue — the brand's lime */
+  --positive: #a7ff9c;     /* a yellow-green accent is also the positive */
+  --pill-positive-bg: #17231b;  --pill-positive-ink: #a7ff9c;
+  --negative: #e5566f;
+  --pill-negative-bg: #2c1a20;  --pill-negative-ink: #e5566f;
+  --pill-warning-bg: #2a2318;   --pill-warning-ink: #e8c268;
+  --pill-neutral-bg: #242220;   --pill-neutral-ink: #d4d0c8;
+  --grid: #2b2926;
+  --radius-card: 8px;
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-surface: var(--card);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-rule: var(--rule);
+  --color-control: var(--control);
+  --color-ink: var(--text);
+  --color-mut: var(--mut);
+  --color-faint: var(--faint);
+  --color-mint: var(--accent);
+  --color-signal: var(--hue);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --font-sans: var(--font-schibsted), "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── App-screen semantic tokens, remapped from the deck's cool slate/indigo
+   family to the warm neutral darks True-black flat calls for. Every screen
+   that said bg-ink-900 / text-slate-400 now lands on the new palette with
+   no per-file edit. Structural lines sit 22–31 levels above the ground, as
+   the style measures them. ── */
 @theme {
-  --color-ink-950: #05060b;
-  --color-ink-900: #0a0c14;
-  --color-ink-800: #10131f;
-  --color-ink-700: #171b2c;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  /* warm near-black surfaces: ground → card → raised → control */
+  --color-ink-950: #0e0d0c;
+  --color-ink-900: #181716;
+  --color-ink-800: #242220;
+  --color-ink-700: #3a3734;
+
+  /* two greys that read apart, at 4.5:1+ on the ground */
+  --color-slate-200: #e5e4e1;
+  --color-slate-300: #f5f4f1;
+  --color-slate-400: #b4b4b4;
+  --color-slate-500: #949494;
+  --color-slate-600: #767571;
+
+  /* retire the banned violet/indigo accent to neutral, so any leftover
+     focus ring or tinted pill reads as the neutral step, not a brand hue */
+  --color-indigo-300: #b4b4b4;
+  --color-indigo-400: #949494;
+  --color-indigo-500: #3a3734;
+  --color-indigo-600: #242220;
 }
 
 html {
@@ -14,84 +91,86 @@ html {
 }
 
 body {
-  background: var(--color-ink-950);
-  color: #cbd5e1;
+  background: var(--ground);
+  color: var(--text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
 }
 
 ::selection {
-  background: rgba(99, 102, 241, 0.4);
-  color: #fff;
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #0a0c14;
-}
-::-webkit-scrollbar-thumb {
-  background: #232840;
-  border-radius: 8px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #2e3554;
-}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ground); }
+::-webkit-scrollbar-thumb { background: var(--control); border-radius: 8px; }
 
-/* Subtle grid + aurora used by hero/sections */
-.bg-grid {
-  background-image:
-    linear-gradient(rgba(148, 163, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 255, 0.05) 1px, transparent 1px);
-  background-size: 44px 44px;
+/* Panels: True-black flat, elevation by lightness step only */
+.gp-card {
+  background: var(--card);
+  border-radius: var(--radius-card);
 }
-
-.text-gradient {
-  background: linear-gradient(92deg, #a5b4fc 0%, #818cf8 40%, #22d3ee 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.gp-panel {
+  background: var(--raised);
+  border-radius: var(--radius-card);
 }
+.gp-num { font-variant-numeric: tabular-nums; }
 
+/* Caret after a typed line */
+@keyframes gp-caret-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+.gp-caret { animation: gp-caret-blink 1.1s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .gp-caret { animation: none; } }
+
+/* The CTA's blank-field input: filled block, one line tall, no border */
+.gp-blank {
+  background: var(--field-2);
+  color: var(--text);
+  padding: 0 0.3em 0.06em;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+}
+.gp-blank::placeholder { color: #00000080; }
+
+/* Section entrance for gathered parts */
+.gp-reveal { opacity: 0; transform: translateY(20px); }
+.gp-reveal.is-in { opacity: 1; transform: none; }
+td.gp-num, th.gp-num { text-align: right; }
+
+/* Google-Web-Fonts disabled: fonts load via next/font (layout.tsx) */
+
+/* Article prose on the light ground */
 .prose-article h2 {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: 600;
-  color: #f1f5f9;
-  margin: 2.25rem 0 0.75rem;
+  font-size: 1.5rem; line-height: 2rem; font-weight: 600;
+  color: var(--text); margin: 2.25rem 0 0.75rem;
 }
 .prose-article h3 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #e2e8f0;
+  font-size: 1.15rem; font-weight: 600; color: var(--text);
   margin: 1.75rem 0 0.5rem;
 }
 .prose-article p {
-  margin: 0 0 1.1rem;
-  line-height: 1.8;
-  color: #b6c2d4;
+  margin: 0 0 1.1rem; line-height: 1.8; color: var(--text);
+  max-width: 65ch;
 }
-.prose-article ul {
-  margin: 0 0 1.25rem 1.25rem;
-  list-style: disc;
-}
-.prose-article li {
-  margin-bottom: 0.5rem;
-  line-height: 1.7;
-  color: #b6c2d4;
-}
-.prose-article a {
-  color: #a5b4fc;
-  text-decoration: underline;
-}
+.prose-article ul { margin: 0 0 1.25rem 1.25rem; list-style: disc; }
+.prose-article li { margin-bottom: 0.5rem; line-height: 1.7; color: var(--text); }
+.prose-article a { color: var(--hue); text-decoration: underline; }
 .prose-article code {
-  background: rgba(148, 163, 255, 0.1);
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 0.875em;
+  background: var(--raised); border-radius: 4px; padding: 2px 6px;
+  font-size: 0.875em; color: var(--text);
 }
-.prose-article strong {
-  color: #e2e8f0;
+.prose-article strong { color: var(--text); }
+
+/* Motion helpers, transforms/opacity only, reduced-motion keeps content */
+.gp-rise, .gp-reveal { opacity: 0; transform: translateY(18px); }
+.gp-reveal { transition: opacity 0.5s ease var(--d, 0ms), transform 0.6s cubic-bezier(0.2, 0.6, 0.2, 1) var(--d, 0ms); }
+.gp-reveal.is-in { opacity: 1; transform: none; }
+@keyframes gp-drift { from { transform: scale(1); } to { transform: scale(1.06); } }
+.gp-drift { animation: gp-drift 14s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) {
+  .gp-reveal, .gp-rise { opacity: 1; transform: none; transition: none; }
+  .gp-drift { animation: none; }
+  html { scroll-behavior: auto; }
 }

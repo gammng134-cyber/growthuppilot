@@ -42,6 +42,16 @@ export async function PUT(req: Request) {
     }
     if (typeof body.autopilot === "boolean") patch.autopilot = body.autopilot;
     if (typeof body.autoPublish === "boolean") patch.autoPublish = body.autoPublish;
+    if (typeof body.outreachAutopilot === "boolean") {
+      patch.outreachAutopilot = body.outreachAutopilot;
+    }
+    if (body.dailySendCap !== undefined) {
+      const cap = Number(body.dailySendCap);
+      if (!Number.isInteger(cap) || cap < 1 || cap > 100) {
+        return NextResponse.json({ error: "dailySendCap must be 1-100" }, { status: 400 });
+      }
+      patch.dailySendCap = cap;
+    }
     if (body.sendVia !== undefined) {
       if (body.sendVia !== "resend" && body.sendVia !== "mailbox") {
         return NextResponse.json(

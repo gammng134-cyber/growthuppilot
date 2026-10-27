@@ -65,7 +65,7 @@ export function ChatbotPage({ isDemo }: { isDemo: boolean }) {
 
       <div
         ref={scrollRef}
-        className="mb-4 max-h-[32rem] space-y-3 overflow-y-auto rounded-xl border border-white/10 bg-white/[0.02] p-5"
+        className="mb-4 max-h-[32rem] space-y-3 overflow-y-auto rounded-xl border border-[var(--line)] bg-[var(--card)] p-5"
       >
         {messages.length === 0 && (
           <p className="py-8 text-center text-sm text-slate-500">
@@ -77,7 +77,7 @@ export function ChatbotPage({ isDemo }: { isDemo: boolean }) {
           m.role === "user" ? (
             <div
               key={i}
-              className="ml-8 rounded-2xl rounded-tr-sm border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-slate-200"
+              className="ml-8 rounded-2xl rounded-tr-sm border border-[var(--line)] bg-[var(--card)] px-4 py-2.5 text-sm text-slate-200"
             >
               {m.content}
             </div>

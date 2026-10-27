@@ -37,7 +37,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const colors: Record<ToastKind, string> = {
     success: "border-emerald-400/30 bg-emerald-950/90 text-emerald-200",
     error: "border-rose-400/30 bg-rose-950/90 text-rose-200",
-    info: "border-indigo-400/30 bg-indigo-950/90 text-indigo-200",
+    info: "border-slate-400/30 bg-slate-950/90 text-slate-300"
   };
 
   return (

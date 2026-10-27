@@ -22,6 +22,10 @@ export interface Settings {
   autoPublish: boolean;
   /** "resend" (deliverability platform) or "mailbox" (connected Gmail/Outlook). */
   sendVia: "resend" | "mailbox";
+  /** Cold-email autopilot: send emails and follow-ups without per-send approval. */
+  outreachAutopilot: boolean;
+  /** Max emails the autopilot sends per user per calendar day (safety cap). */
+  dailySendCap: number;
 }
 
 export function defaultSettings(userId: string): Settings {
@@ -36,6 +40,8 @@ export function defaultSettings(userId: string): Settings {
     autopilot: false,
     autoPublish: false,
     sendVia: "resend",
+    outreachAutopilot: false,
+    dailySendCap: 15,
   };
 }
 
@@ -288,6 +294,8 @@ export interface Storage {
 
   // Cross-user automation (cron)
   dueFollowUps(now: Date): Promise<{ userId: string; draft: EmailDraft }[]>;
+  /** Users with cold-email autopilot enabled, with emails already sent today. */
+  outreachTargets(now: Date): Promise<{ userId: string; sentToday: number }[]>;
   autopilotTargets(): Promise<
     { userId: string; keyword: Keyword | null; hasPlan: boolean }[]
   >;

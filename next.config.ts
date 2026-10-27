@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["postgres"],
-  serverComponentsExternalPackages: "auto",
+  serverExternalPackages: ["postgres"],
 };
 
 // Augment the webpack config to externalize Node built-ins required by the
@@ -10,7 +9,7 @@ const nextConfig: NextConfig = {
 // perf_hooks) cannot be resolved by webpack's bundler so they must be
 // externalized; Node.js provides polyfills at runtime.
 nextConfig.webpack = (config) => {
-  // Next.js may already have an `externals` array from `serverComponentsExternalPackages`.
+  // Next.js may already have an `externals` array from `serverExternalPackages`.
   // Merge the Node built-ins into it without destroying the existing array.
   const existing = config.externals;
   if (Array.isArray(existing)) {

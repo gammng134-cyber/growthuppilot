@@ -8,6 +8,16 @@
     {
       "path": "/api/cron/followups",
       "schedule": "30 9 * * *"
+    },
+    {
+      "path": "/api/cron/outreach",
+      "schedule": "15 10 * * 1-5"
     }
-  ]
+  ],
+  "functions": {
+    "api/**": {
+      "memory": 512,
+      "maxDuration": 10
+    }
+  }
 }

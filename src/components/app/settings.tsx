@@ -17,6 +17,8 @@ type Settings = {
   autopilot?: boolean;
   autoPublish?: boolean;
   sendVia?: "resend" | "mailbox";
+  outreachAutopilot?: boolean;
+  dailySendCap?: number;
 };
 
 type MailConnection = {
@@ -44,6 +46,7 @@ export function SettingsPage() {
   const [saving, setSaving] = React.useState(false);
   const [s, setS] = React.useState<Settings>({});
   const [conns, setConns] = React.useState<MailConnection[]>([]);
+  const [running, setRunning] = React.useState(false);
   const [configured, setConfigured] = React.useState<{
     gmail: boolean;
     outlook: boolean;
@@ -115,6 +118,31 @@ export function SettingsPage() {
       toast("Mailbox disconnected");
     } catch {
       toast("Network error", "error");
+    }
+  }
+
+  async function runAutopilotNow() {
+    setRunning(true);
+    try {
+      const res = await fetch("/api/automation/run", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        toast(data.error ?? "Autopilot run failed", "error");
+        return;
+      }
+      if (data.enabled === false) {
+        toast("Autopilot is off — turn it on and save first", "error");
+        return;
+      }
+      toast(
+        data.skippedReason
+          ? `Autopilot ran — nothing sent (${data.skippedReason})`
+          : `Autopilot sent ${data.sent} email${data.sent === 1 ? "" : "s"}${data.failed ? `, ${data.failed} failed` : ""}`,
+      );
+    } catch {
+      toast("Network error", "error");
+    } finally {
+      setRunning(false);
     }
   }
 
@@ -235,7 +263,7 @@ export function SettingsPage() {
               {conns.map((c) => (
                 <li
                   key={c.id}
-                  className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3"
+                  className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-white/5 px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
                     <span
@@ -336,6 +364,52 @@ export function SettingsPage() {
           </div>
         </Section>
 
+        <Section title="Cold email autopilot">
+          <p className="mb-4 text-sm text-slate-400">
+            Let the Email Agent send on its own via your chosen transport. When on,
+            every weekday at 10:15 UTC it sends due follow-ups, then personalized
+            first-touch emails to contacts without one — up to your daily cap.
+            Unsubscribed contacts are never emailed. You can also run it once right
+            now below.
+          </p>
+          <div className="flex flex-wrap items-center gap-8">
+            <Checkbox
+              label="Send emails & follow-ups automatically"
+              checked={s.outreachAutopilot === true}
+              onChange={(e) => setS((x) => ({ ...x, outreachAutopilot: e.target.checked }))}
+            />
+            <div>
+              <Label>Daily send cap</Label>
+              <Select
+                value={String(s.dailySendCap ?? 15)}
+                onChange={(e) =>
+                  setS((x) => ({ ...x, dailySendCap: Number((e.target as HTMLSelectElement).value) }))
+                }
+              >
+                <option value="5">5 / day</option>
+                <option value="15">15 / day</option>
+                <option value="30">30 / day</option>
+                <option value="50">50 / day</option>
+              </Select>
+            </div>
+            <div>
+              <Label>Run once now</Label>
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={running}
+                onClick={runAutopilotNow}
+              >
+                {running ? "Running…" : "Run autopilot once"}
+              </Button>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-slate-500">
+            Saving the toggle matters too — &ldquo;Run once now&rdquo; only works if
+            this autopilot is on and your transport (mailbox or Resend) is set up.
+          </p>
+        </Section>
+
         <Section title="Autopilot">
           <p className="mb-4 text-sm text-slate-400">
             Let the SEO Agent run on its own. When on, every morning it ensures a
@@ -414,7 +488,7 @@ function Checkbox({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="h-4 w-4 rounded border-white/10 bg-white/5 text-indigo-500 accent-indigo-500 focus:ring-indigo-400/40"
+        className="h-4 w-4 rounded border-[var(--line)] bg-white/5 text-slate-300 accent-slate-300 focus:ring-slate-500/40"
       />
       <span className="text-sm text-slate-300">{label}</span>
     </label>

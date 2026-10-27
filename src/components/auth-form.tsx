@@ -84,17 +84,24 @@ export function AuthForm({
         transition={{ duration: 0.5 }}
         className="w-full max-w-sm"
       >
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-400 text-sm font-bold text-white">
-            G
-          </span>
-          <span className="text-[15px] font-semibold text-white">GrowthPilot</span>
+        <Link href="/" className="mb-8 flex items-center justify-center gap-2.5">
+          <svg width={24} height={24} viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 17 L12 6 L20 17"
+              fill="none"
+              stroke="var(--hue)"
+              strokeWidth="2.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="text-[15px] font-semibold text-[var(--text)]">GrowthPilot</span>
         </Link>
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur">
-          <h1 className="text-xl font-semibold text-white">
+        <div className="rounded-lg bg-[var(--card)] p-8">
+          <h1 className="text-xl font-semibold text-[var(--text)]">
             {isSignup ? "Create your workspace" : "Welcome back"}
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-[var(--mut)]">
             {isSignup
               ? "Free to start. No card, no nonsense."
               : "Sign in to your agent team."}
@@ -150,17 +157,13 @@ export function AuthForm({
           <p className="mt-6 text-center text-sm text-slate-500">
             {isSignup ? (
               <>
-                Already have an account?{" "}
-                <Link href="/login" className="text-indigo-300 hover:text-indigo-200">
-                  Sign in
-                </Link>
+                Already have an account?{" "}<Link href="/login" className="text-slate-300 hover:text-slate-400">
+                  Sign in</Link>
               </>
             ) : (
               <>
-                New here?{" "}
-                <Link href="/signup" className="text-indigo-300 hover:text-indigo-200">
-                  Create a workspace
-                </Link>
+                New here?{" "}<Link href="/signup" className="text-slate-300 hover:text-slate-400">
+                  Create a workspace</Link>
               </>
             )}
           </p>
